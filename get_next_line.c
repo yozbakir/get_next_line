@@ -6,12 +6,13 @@
 /*   By: yozbakir <yozbakir@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 11:35:07 by yozbakir          #+#    #+#             */
-/*   Updated: 2024/02/03 14:39:59 by yozbakir         ###   ########.fr       */
+/*   Updated: 2024/02/03 17:36:04 by yozbakir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 char	*ft_copy_stack(char *stack, char *buffer)
 {
@@ -119,20 +120,3 @@ char	*get_next_line(int fd)
 	}
 	return (ft_free_stack(&stack, 1));
 }
-
-// #include <fcntl.h>
-// #include <stdio.h>
-// int main(void)
-// {
-// 	int fd = open("deneme.txt", O_RDONLY);
-// 	char *str = get_next_line(fd);
-// 	int i = 0;
-// 	while (i < 10)
-// 	{
-// 		printf("%s", str);
-// 		free(str);
-// 		str = get_next_line(fd);
-// 		i++;
-// 	}
-// }
-

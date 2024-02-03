@@ -6,12 +6,12 @@
 /*   By: yozbakir <yozbakir@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 11:35:19 by yozbakir          #+#    #+#             */
-/*   Updated: 2024/02/03 14:20:15 by yozbakir          ###   ########.tr      */
+/*   Updated: 2024/02/03 16:03:38 by yozbakir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 size_t	ft_strlen(const char *s)
 {
