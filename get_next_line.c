@@ -5,117 +5,114 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yozbakir <yozbakir@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/01 11:35:07 by yozbakir          #+#    #+#             */
-/*   Updated: 2024/02/03 17:36:04 by yozbakir         ###   ########.fr       */
+/*   Created: 2024/02/04 10:24:11 by yozbakir          #+#    #+#             */
+/*   Updated: 2024/02/04 12:39:58 by yozbakir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <unistd.h>
-#include <stdlib.h>
 
-char	*ft_copy_stack(char *stack, char *buffer)
+static char	*ft_copy_to_stack(char *stack, char *buf)
 {
-	char	*newstack;
+	char	*res;
 
-	if (!stack && buffer)
+	res = 0;
+	if (!stack && buf)
 	{
-		newstack = ft_strdup(buffer);
-		if (!newstack)
-			return (0);
-		return (newstack);
+		res = ft_strdup(buf);
+		if (!res)
+			return (NULL);
+		return (res);
 	}
-	newstack = ft_strjoin(stack, buffer);
+	res = ft_strjoin(stack, buf);
 	ft_free_stack(&stack, 0);
-	return (newstack);
+	return (res);
 }
 
-size_t	new_line_check(char *stack)
+static int	ft_check_nl(char *s)
 {
 	size_t	i;
 
-	if (!stack)
+	if (!s)
 		return (0);
-	i = 0;
-	while (stack[i])
-	{
-		if (stack[i] == '\n')
+	i = -1;
+	while (s[++i] != '\0')
+		if (s[i] == '\n')
 			return (1);
-		i++;
-	}
 	return (0);
 }
 
-char	*get_line(char *stack)
+static char	*ft_extract_line(char *stack)
 {
+	char	*line;
 	size_t	i;
 	size_t	j;
-	char	*newline;
 
+	i = 0;
 	if (!stack)
 		return (0);
-	i = 0;
 	while (stack[i] != '\n')
 		i++;
-	newline = (char *)malloc(sizeof(char) * (i + 2));
-	if (!newline)
+	line = malloc(sizeof(char) * (i + 2));
+	if (!line)
 		return (0);
 	j = 0;
-	while (j < (i + 1))
+	while (j < i + 1)
 	{
-		newline[j] = stack[j];
+		line[j] = stack[j];
 		j++;
 	}
-	newline[j] = '\0';
-	return (newline);
+	line[j] = '\0';
+	return (line);
 }
 
-char	*new_line(char *stack)
+static char	*ft_recreate_stack(char *stack)
 {
-	int		i;
-	char	*newstack;
+	size_t	i;
+	char	*res;
 
-	if (!stack)
-		return (0);
 	i = 0;
+	if (!stack)
+		return (NULL);
 	while (stack[i] != '\n')
 		i++;
 	if (stack[i + 1] == '\0')
 		return (ft_free_stack(&stack, 0));
-	newstack = ft_substr(stack, i + 1, ft_strlen(stack));
-	if (!newstack)
+	res = ft_substr(stack, i + 1, ft_strlen(stack));
+	if (!res)
 	{
 		ft_free_stack(&stack, 0);
-		return (0);
+		return (NULL);
 	}
 	ft_free_stack(&stack, 0);
-	return (newstack);
+	return (res);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*line;
 	char		buffer[BUFFER_SIZE + 1];
-	long		read_bytes;
-	static char	*stack;
+	long		bytes_read;
+	static char	*stack = NULL;
+	char		*line;
 
 	line = 0;
-	read_bytes = BUFFER_SIZE;
+	bytes_read = BUFFER_SIZE;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (ft_free_stack(&stack, 0));
-	while (read_bytes > 0)
+	while (bytes_read > 0)
 	{
-		read_bytes = read(fd, buffer, BUFFER_SIZE);
-		if ((read_bytes <= 0 && !stack) || read_bytes == -1)
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if ((bytes_read <= 0 && !stack) || bytes_read == -1)
 			return (ft_free_stack(&stack, 0));
-		buffer[read_bytes] = '\0';
-		stack = ft_copy_stack(stack, buffer);
-		if (new_line_check(stack))
+		buffer[bytes_read] = '\0';
+		stack = ft_copy_to_stack(stack, buffer);
+		if (ft_check_nl(stack))
 		{
-			line = get_line(stack);
+			line = ft_extract_line(stack);
 			if (!line)
 				return (ft_free_stack(&stack, 0));
-			return (stack = new_line(stack), line);
+			return (stack = ft_recreate_stack(stack), line);
 		}
 	}
 	return (ft_free_stack(&stack, 1));

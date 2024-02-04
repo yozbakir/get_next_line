@@ -5,82 +5,86 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yozbakir <yozbakir@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/01 11:35:19 by yozbakir          #+#    #+#             */
-/*   Updated: 2024/02/03 16:03:38 by yozbakir         ###   ########.fr       */
+/*   Created: 2024/02/04 10:24:45 by yozbakir          #+#    #+#             */
+/*   Updated: 2024/02/04 12:08:20 by yozbakir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdlib.h>
+#include "get_next_line.h"
 
 size_t	ft_strlen(const char *s)
 {
-	size_t	i;
+	size_t	len;
 
-	i = 0;
-	while (s[i] != '\0')
-		i++;
-	return (i);
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	return (len);
 }
 
-char	*ft_strdup(const char *buffer)
+char	*ft_strdup(const char *str)
 {
-	char	*stack;
+	size_t	len;
+	char	*new;
 	int		i;
 
-	stack = (char *)malloc(ft_strlen(buffer) + 1);
-	if (!stack)
-		return (0);
 	i = 0;
-	while (buffer[i])
-	{
-		stack[i] = buffer[i];
-		i++;
-	}
-	stack[i] = '\0';
-	return (stack);
+	len = ft_strlen(str) + 1;
+	new = (char *)malloc(len);
+	if (!new)
+		return (NULL);
+	while (*str)
+		new[i++] = *str++;
+	new[i] = '\0';
+	return (new);
 }
 
-char	*ft_strjoin(char const *stack, char const *buffer)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
+	size_t	len;
 	size_t	i;
 	char	*new_str;
 
-	if (!stack || !buffer)
-		return (0);
-	new_str = (char *)malloc(ft_strlen(stack) + ft_strlen(buffer) + 1);
+	if (!s1 || !s2)
+		return (NULL);
+	len = ft_strlen(s1) + ft_strlen(s2);
+	new_str = (char *)malloc(len + 1);
 	if (!new_str)
 		return (NULL);
 	i = 0;
-	while (*stack)
-		new_str[i++] = *stack++;
-	while (*buffer)
-		new_str[i++] = *buffer++;
+	while (*s1)
+		new_str[i++] = *s1++;
+	while (*s2)
+		new_str[i++] = *s2++;
 	new_str[i] = '\0';
 	return (new_str);
 }
 
-char	*ft_substr(char const *stack, unsigned int start, size_t len)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	char	*new_line;
+	char	*res;
 	size_t	i;
 	size_t	j;
+	size_t	s_len;
 
-	if (!stack || len <= 0)
-		return (0);
-	new_line = (char *)malloc(sizeof(char) * (len + 1));
-	if (!new_line)
-		return (0);
+	s_len = ft_strlen(s);
+	if (!s || len <= 0)
+		return (NULL);
+	if (len > s_len)
+		len = s_len;
+	res = malloc(sizeof(char) * (len + 1));
+	if (!res)
+		return (NULL);
 	i = start;
 	j = 0;
-	while (i < len && j < len)
+	while (i < s_len && j < len)
 	{
-		new_line[j] = stack[i];
+		res[j] = s[i];
 		i++;
 		j++;
 	}
-	new_line[j] = '\0';
-	return (new_line);
+	res[j] = '\0';
+	return (res);
 }
 
 void	*ft_free_stack(char **stack, int create_line)
@@ -88,22 +92,22 @@ void	*ft_free_stack(char **stack, int create_line)
 	char	*line;
 
 	if (!*stack)
-		return (0);
-	if (!create_line)
+		return (NULL);
+	if (create_line == 0)
 	{
 		if (*stack)
 		{
 			free(*stack);
-			*stack = 0;
+			*stack = NULL;
 		}
-		return (0);
+		return (NULL);
 	}
-	else if (create_line)
+	else if (create_line == 1)
 	{
 		line = ft_strdup(*stack);
 		free(*stack);
-		*stack = 0;
+		*stack = NULL;
 		return (line);
 	}
-	return (0);
+	return (NULL);
 }
